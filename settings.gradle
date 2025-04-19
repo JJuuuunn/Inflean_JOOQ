@@ -1,1 +1,3 @@
 rootProject.name = 'JOOQ'
+include 'jOOQ-custom'
+

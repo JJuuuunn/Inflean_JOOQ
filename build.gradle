@@ -6,8 +6,8 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.4'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.2.3'
+    id 'io.spring.dependency-management' version '1.1.4'
     id 'nu.studer.jooq' version '9.0'
 }
 
@@ -24,6 +24,14 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src/main/java", "src/generated"]
+        }
+    }
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation ('org.springframework.boot:spring-boot-starter-jooq') {
@@ -35,7 +43,7 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    jooqGenerator 'com.mysql:mysql-connector-j'
+    jooqGenerator project(':jOOQ-custom')
 
     jooqGenerator "org.jooq:jooq:${jooqVersion}"
     jooqGenerator "org.jooq:jooq-meta:${jooqVersion}"
@@ -65,7 +73,7 @@ jooq {
 
                     database {
                         name = 'org.jooq.meta.mysql.MySQLDatabase'
-
+                        unsignedTypes = false // Optional
                         schemata {
                             schema {
                                 inputSchema = 'sakila'
@@ -84,6 +92,10 @@ jooq {
                     target {
                         directory = 'src/generated'
                     }
+
+                    // jooq-custom 내부의 설정
+                    // 왜 따로 서브 모듈로 분리해서 구성했는지?
+                    strategy.name = 'jooq.custom.generator.JPrefixGeneratorStrategy'
                 }
             }
         }
